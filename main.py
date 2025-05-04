@@ -13,21 +13,49 @@ clock = pg.time.Clock()
 mode = 'таймер'
 
 class Tab():
-    def __init__(self,w,h,x,y,color,text, text_color):
+    def __init__(self,w,h,x,y,color,text, text_color,text_size,shift_x,shift_y):
         self.rect = pg.Rect(x,y,w,h)
         self.color = color
         self.text = text
         self.text_color = text_color
-        self.label = pg.font.SysFont('arial',20).render(text, True, self.text_color)
+        self.label = pg.font.SysFont('arial',text_size).render(text, True, self.text_color)
+        self.shift_x = shift_x
+        self.shift_y = shift_y
     def draw(self):
         pg.draw.rect(win,self.color, self.rect)
-        win.blit(self.label, (self.rect.x + 5, self.rect.y))
+        win.blit(self.label, (self.rect.x + self.shift_x, self.rect.y + self.shift_y))
+    def get_border(self):
+        pg.draw.rect(win,((0,0,0)), self.rect,2)
+
+class Button():
+    def __init__(self,w,h,x,y,color,text, text_color,text_size):
+        self.rect = pg.Rect(x,y,w,h)
+        self.color = color
+        self.text = text
+        self.text_color = text_color
+        self.label = pg.font.SysFont('arial',text_size).render(text, True, self.text_color)
+    def draw(self):
+        pg.draw.rect(win,self.color, self.rect)
+        win.blit(self.label, (self.rect.x + 20, self.rect.y))
+    def get_border(self):
+        pg.draw.rect(win,((0,0,0)), self.rect,2)
+
 
 x,y = w,h
-tab_clock = Tab(int(w/3),int(h/5), 0 , 0,(255,0,0),'Таймер',(255,255,255))
-tab_sw = Tab(int(w/3),int(h/5), 120 , 0,(0,255,0),'Секундомер',(255,255,255))
-tab_alarm = Tab(int(w/3),int(h/5), 240, 0,(0,0,255),'Будильник',(255,255,255))
+tab_clock = Tab(int(w/3),int(h/5), 0 , 0,(255,0,0),'Таймер',(255,255,255),20,22,0)
+tab_sw = Tab(int(w/3),int(h/5), 120 , 0,(0,255,0),'Секундомер',(255,255,255),20,22,0)
+tab_alarm = Tab(int(w/3),int(h/5), 240, 0,(0,0,255),'Будильник',(255,255,255),20,22,0)
 clock_content = pg.font.SysFont('arial',65).render('00:00:00', True, (255,255,255))
+alarm_content = pg.font.SysFont('arial',65).render('00:00', True, (255,255,255))
+stopwatch_content = pg.font.SysFont('arial',65).render('00:00:00', True, (255,255,255))
+sw_start = Tab(int(w/5),int(h/8), int(w*0.2) , int(h*0.80),(255,255,255),'старт',(0,0,0),20,18,0)
+sw_stop = Tab(int(w/5),int(h/8), int(w*0.4) , int(h*0.80),(255,255,255),'стоп',(0,0,0),20,18,0)
+sw_reset = Tab(int(w/5),int(h/8), int(w*0.6) , int(h*0.80),(255,255,255),'заново',(0,0,0),20,18,0)
+ah_plus =Tab(int((w/5)/2.5),int(h/8.1), int(w*0.35) , int(h*0.25),(255,255,255),'+',(0,0,0),50,3,-18)
+ah_minus=Tab(int((w/5)/2.5),int(h/8), int(w*0.35) , int(h*0.78),(255,255,255),'-',(0,0,0),50,3,-18)
+am_plus=Tab(int((w/5)/2.5),int(h/8.1), int(w*0.63) , int(h*0.25),(255,255,255),'+',(0,0,0),50,7,-18)
+am_minus=Tab(int((w/5)/2.5),int(h/8), int(w*0.63) , int(h*0.78),(255,255,255),'-',(0,0,0),50,7,-18)
+
 
 
 while  run:
@@ -46,10 +74,49 @@ while  run:
     if mode == 'таймер':
         win.fill((255,0,0))
         win.blit(clock_content,(int(w/5),int(h/2.5)))
+    
+        
     elif mode == "секундомер":
+        if sw_reset.rect.collidepoint(x,y):
+            print('лол')
+            x,y = -1,-1
+        elif sw_start.rect.collidepoint(x,y):
+            print('лол')
+            x,y = -1,-1
+        elif sw_stop.rect.collidepoint(x,y):
+            print('лол')
+            x,y = -1,-1
         win.fill((0,255,0))
+        win.blit(stopwatch_content,(int(w/5),int(h/2.5)))
+        sw_reset.draw()
+        sw_reset.get_border()
+        sw_start.draw()
+        sw_start.get_border()
+        sw_stop.draw()
+        sw_stop.get_border()
     elif mode == "будильник":
+        if ah_plus.rect.collidepoint(x,y):
+            print('лол')
+            x,y = -1,-1
+        elif ah_minus.collidepoint(x,y):
+            print('лол')
+            x,y = -1,-1
+        elif am_plus.rect.collidepoint(x,y):
+            print('лол')
+            x,y = -1,-1
+        elif am_minus.rect.collidepoint(x,y):
+            print("лол")
         win.fill((0,0,255))
+        win.blit(alarm_content,(int(w/2.9),int(h/2.5)))
+        ah_plus.draw()
+        ah_plus.get_border()
+        ah_minus.draw()
+        ah_minus.get_border()
+        am_plus.draw()
+        am_plus.get_border()
+        am_minus.draw()
+        am_minus.get_border()
+
     tab_clock.draw()
     tab_sw.draw()
     tab_alarm.draw()
