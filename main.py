@@ -1,4 +1,6 @@
 import pygame as pg
+import datetime as dt
+import time
 pg.init()
 pg.mixer.init()
 pg.font.init()
@@ -40,12 +42,17 @@ class Button():
     def get_border(self):
         pg.draw.rect(win,((0,0,0)), self.rect,2)
 
-
+t = dt.datetime.now().time()
 x,y = w,h
-tab_clock = Tab(int(w/3),int(h/5), 0 , 0,(255,0,0),'Таймер',(255,255,255),20,22,0)
+ho = 00
+m = 00
+s =00
+co = 0
+f = False
+tab_clock = Tab(int(w/3),int(h/5), 0 , 0,(255,0,0),'Часы',(255,255,255),20,22,0)
 tab_sw = Tab(int(w/3),int(h/5), 120 , 0,(0,255,0),'Секундомер',(255,255,255),20,22,0)
 tab_alarm = Tab(int(w/3),int(h/5), 240, 0,(0,0,255),'Будильник',(255,255,255),20,22,0)
-clock_content = pg.font.SysFont('arial',65).render('00:00:00', True, (255,255,255))
+clock_content = pg.font.SysFont('arial',65).render(f"{str(t.hour)}:{str(t.minute)}:{str(t.second)}", True, (255,255,255))
 alarm_content = pg.font.SysFont('arial',65).render('00:00', True, (255,255,255))
 stopwatch_content = pg.font.SysFont('arial',65).render('00:00:00', True, (255,255,255))
 sw_start = Tab(int(w/5),int(h/8), int(w*0.2) , int(h*0.80),(255,255,255),'старт',(0,0,0),20,18,0)
@@ -59,6 +66,20 @@ am_minus=Tab(int((w/5)/2.5),int(h/8), int(w*0.63) , int(h*0.78),(255,255,255),'-
 
 
 while  run:
+    if f == True:
+        if s < 60:
+            co += 1
+            if co == 60:
+                s+=1
+                co = 0
+                if s == 60:
+                    m += 1
+                    s = 0
+                    if m == 60:
+                        ho+=1
+                        m = 0
+    stopwatch_content = pg.font.SysFont('arial',65).render(f"{str(ho)}:{str(m)}:{str(s)}", True, (255,255,255))
+
     for e in pg.event.get():
         if e.type == pg.QUIT:
             run = False
@@ -72,20 +93,26 @@ while  run:
     elif tab_alarm.rect.collidepoint(x,y):
         mode = "будильник"
     if mode == 'таймер':
+        t = dt.datetime.now().time()
+        clock_content = pg.font.SysFont('arial',65).render(f"{str(t.hour)}:{str(t.minute)}:{str(t.second)}", True, (255,255,255))
         win.fill((255,0,0))
         win.blit(clock_content,(int(w/5),int(h/2.5)))
     
         
     elif mode == "секундомер":
         if sw_reset.rect.collidepoint(x,y):
-            print('лол')
-            x,y = -1,-1
+            ho = 0
+            m = 0
+            s =0
+            f = False
+            stopwatch_content = pg.font.SysFont('arial',65).render(f"{str(ho)}:{str(m)}:{str(s)}", True, (255,255,255))
         elif sw_start.rect.collidepoint(x,y):
-            print('лол')
-            x,y = -1,-1
+            f = True
+
         elif sw_stop.rect.collidepoint(x,y):
-            print('лол')
+            print("stop")
             x,y = -1,-1
+            f = False
         win.fill((0,255,0))
         win.blit(stopwatch_content,(int(w/5),int(h/2.5)))
         sw_reset.draw()
@@ -98,7 +125,7 @@ while  run:
         if ah_plus.rect.collidepoint(x,y):
             print('лол')
             x,y = -1,-1
-        elif ah_minus.collidepoint(x,y):
+        elif ah_minus.rect.collidepoint(x,y):
             print('лол')
             x,y = -1,-1
         elif am_plus.rect.collidepoint(x,y):
