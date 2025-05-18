@@ -45,6 +45,8 @@ class Button():
 t = dt.datetime.now().time()
 x,y = w,h
 ho = 00
+h2 = 0
+m2 = 0
 m = 00
 s =00
 co = 0
@@ -53,7 +55,7 @@ tab_clock = Tab(int(w/3),int(h/5), 0 , 0,(255,0,0),'Часы',(255,255,255),20,2
 tab_sw = Tab(int(w/3),int(h/5), 120 , 0,(0,255,0),'Секундомер',(255,255,255),20,22,0)
 tab_alarm = Tab(int(w/3),int(h/5), 240, 0,(0,0,255),'Будильник',(255,255,255),20,22,0)
 clock_content = pg.font.SysFont('arial',65).render(f"{str(t.hour)}:{str(t.minute)}:{str(t.second)}", True, (255,255,255))
-alarm_content = pg.font.SysFont('arial',65).render('00:00', True, (255,255,255))
+alarm_content = pg.font.SysFont('arial',65).render(f"{str(h2)}:{str(m2)}", True, (255,255,255))
 stopwatch_content = pg.font.SysFont('arial',65).render('00:00:00', True, (255,255,255))
 sw_start = Tab(int(w/5),int(h/8), int(w*0.2) , int(h*0.80),(255,255,255),'старт',(0,0,0),20,18,0)
 sw_stop = Tab(int(w/5),int(h/8), int(w*0.4) , int(h*0.80),(255,255,255),'стоп',(0,0,0),20,18,0)
@@ -125,14 +127,29 @@ while  run:
         if ah_plus.rect.collidepoint(x,y):
             print('лол')
             x,y = -1,-1
+            h2 += 1
+
         elif ah_minus.rect.collidepoint(x,y):
             print('лол')
             x,y = -1,-1
+            h2 -= 1
+        elif h2 < 0:
+            h2 = 23
+        elif h2 > 23:
+            h2= 0
         elif am_plus.rect.collidepoint(x,y):
             print('лол')
             x,y = -1,-1
+            m2 += 1
         elif am_minus.rect.collidepoint(x,y):
             print("лол")
+            x,y = -1,-1
+            m2 -= 1
+        elif m2 < 0:
+            m2 = 59
+        elif m2 > 59:
+            m2 = 0
+        alarm_content = pg.font.SysFont('arial',65).render(f"{str(h2)}:{str(m2)}", True, (255,255,255))
         win.fill((0,0,255))
         win.blit(alarm_content,(int(w/2.9),int(h/2.5)))
         ah_plus.draw()
